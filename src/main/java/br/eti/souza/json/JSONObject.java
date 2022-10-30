@@ -1,6 +1,5 @@
 package br.eti.souza.json;
 
-import br.eti.souza.exception.SystemException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,15 +21,15 @@ public class JSONObject extends LinkedHashMap<String, IJSON> implements IJSON {
      * Cria JSONObject apartir do json.
      * @param json JSON que será convertido.
      * @return JSONObject correspondente.
-     * @throws SystemException Caso o json não seja válido.
+     * @throws IllegalArgumentException Caso o json não seja válido.
      */
-    protected static JSONObject fromJSON(String json) throws SystemException {
+    protected static JSONObject fromJSON(String json) {
         if (json == null) {
-            throw new SystemException("invalid.json.format");
+            throw new IllegalArgumentException("invalid.json.format");
         } else {
             json = json.trim();
             if (!json.startsWith("{") || !json.endsWith("}")) {
-                throw new SystemException("invalid.json.format");
+                throw new IllegalArgumentException("invalid.json.format");
             }
         }
         json = json.substring(1, json.length() - 1).trim();
@@ -38,12 +37,12 @@ public class JSONObject extends LinkedHashMap<String, IJSON> implements IJSON {
         while (!json.isEmpty()) {
             String key = JSON.utilityGetStartAsString(json);
             if (key == null) {
-                throw new SystemException("invalid.json.format");
+                throw new IllegalArgumentException("invalid.json.format");
             } else {
                 json = json.substring(key.length()).trim();
                 key = key.substring(1, key.length() - 1).replaceAll("\\\"", "\"");
                 if (!json.startsWith(":")) {
-                    throw new SystemException("invalid.json.format");
+                    throw new IllegalArgumentException("invalid.json.format");
                 } else {
                     json = json.substring(1).trim();
                     String value = JSON.utilityGetStartAsString(json);
@@ -116,7 +115,7 @@ public class JSONObject extends LinkedHashMap<String, IJSON> implements IJSON {
             }
         }
         if (!json.isEmpty()) {
-            throw new SystemException("invalid.json.format");
+            throw new IllegalArgumentException("invalid.json.format");
         }
         return object;
     }
@@ -125,19 +124,19 @@ public class JSONObject extends LinkedHashMap<String, IJSON> implements IJSON {
      * Cria JSONObject apartir do object.
      * @param object Objeto que será convertido.
      * @return JSONObject correspondente.
-     * @throws SystemException Caso o objeto não seja válido.
+     * @throws IllegalArgumentException Caso o objeto não seja válido.
      */
-    protected static JSONObject fromObject(Object object) throws SystemException {
+    protected static JSONObject fromObject(Object object) {
         if (object == null) {
-            throw new SystemException("invalid.object.null");
+            throw new IllegalArgumentException("invalid.object.null");
         } else if (object instanceof String) {
-            throw new SystemException("invalid.object.string");
+            throw new IllegalArgumentException("invalid.object.string");
         } else if (object instanceof Character) {
-            throw new SystemException("invalid.object.character");
+            throw new IllegalArgumentException("invalid.object.character");
         } else if (object instanceof Number) {
-            throw new SystemException("invalid.object.number");
+            throw new IllegalArgumentException("invalid.object.number");
         } else if (object instanceof Boolean) {
-            throw new SystemException("invalid.object.boolean");
+            throw new IllegalArgumentException("invalid.object.boolean");
         } else if (Map.class.isInstance(object)) {
             JSONObject result = new JSONObject();
             var map = Map.class.cast(object);

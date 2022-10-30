@@ -1,6 +1,5 @@
 package br.eti.souza.json;
 
-import br.eti.souza.exception.SystemException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -18,15 +17,15 @@ public class JSONList extends ArrayList<IJSON> implements IJSON {
      * Cria JSONList apartir do json.
      * @param json JSON que será convertido.
      * @return JSONList correspondente.
-     * @throws SystemException Caso o json não seja válido.
+     * @throws IllegalArgumentException Caso o json não seja válido.
      */
-    protected static JSONList fromJSON(String json) throws SystemException {
+    protected static JSONList fromJSON(String json) {
         if (json == null) {
-            throw new SystemException("invalid.json.format");
+            throw new IllegalArgumentException("invalid.json.format");
         } else {
             json = json.trim();
             if (!json.startsWith("[") || !json.endsWith("]")) {
-                throw new SystemException("invalid.json.format");
+                throw new IllegalArgumentException("invalid.json.format");
             }
         }
         json = json.substring(1, json.length() - 1).trim();
@@ -99,7 +98,7 @@ public class JSONList extends ArrayList<IJSON> implements IJSON {
             }
         }
         if (!json.isEmpty()) {
-            throw new SystemException("invalid.json.format");
+            throw new IllegalArgumentException("invalid.json.format");
         }
         return list;
     }
@@ -108,11 +107,11 @@ public class JSONList extends ArrayList<IJSON> implements IJSON {
      * Cria JSONList apartir do object.
      * @param object Objeto que será convertido.
      * @return JSONList correspondente.
-     * @throws SystemException Caso o objeto não seja válido.
+     * @throws IllegalArgumentException Caso o objeto não seja válido.
      */
-    protected static JSONList fromObject(Object object) throws SystemException {
+    protected static JSONList fromObject(Object object) {
         if (object == null) {
-            throw new SystemException("invalid.object.null");
+            throw new IllegalArgumentException("invalid.object.null");
         } else if (object instanceof byte[]) {
             var list = (byte[]) object;
             JSONList result = new JSONList();
@@ -170,7 +169,7 @@ public class JSONList extends ArrayList<IJSON> implements IJSON {
             }
             return result;
         } else {
-            throw new SystemException("invalid.object.unknow.list");
+            throw new IllegalArgumentException("invalid.object.unknow.list");
         }
     }
 

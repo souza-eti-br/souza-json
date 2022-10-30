@@ -1,6 +1,5 @@
 package br.eti.souza.json;
 
-import br.eti.souza.exception.SystemException;
 import java.util.Collection;
 
 /**
@@ -14,23 +13,23 @@ public final class JSON {
      * @param <T> Classe do objeto.
      * @param object Objeto ou lista que será convertido em json.
      * @return JSON correspondete ao objeto ou lista.
-     * @throws SystemException Caso o objeto ou lista não possa ser convertido em json.
+     * @throws IllegalArgumentException Caso o objeto ou lista não possa ser convertido em json.
      */
-    public static <T> String fromObject(T object) throws SystemException {
+    public static <T> String fromObject(T object) {
         if (object == null) {
-            throw new SystemException("illegal.object.null");
+            throw new IllegalArgumentException("illegal.object.null");
         }
         if (String.class.isInstance(object)) {
-            throw new SystemException("illegal.object.string");
+            throw new IllegalArgumentException("illegal.object.string");
         }
         if (Boolean.class.isInstance(object)) {
-            throw new SystemException("illegal.object.boolean");
+            throw new IllegalArgumentException("illegal.object.boolean");
         }
         if (Number.class.isInstance(object)) {
-            throw new SystemException("illegal.object.number");
+            throw new IllegalArgumentException("illegal.object.number");
         }
         if (Character.class.isInstance(object)) {
-            throw new SystemException("illegal.object.character");
+            throw new IllegalArgumentException("illegal.object.character");
         }
         return JSON.recursiveFrom(object).toJSON();
     }
@@ -39,9 +38,9 @@ public final class JSON {
      * Converter objeto ou lista em json (recursivo).
      * @param object Objeto ou lista que será convertido em json.
      * @return IJSON correspondete ao objeto ou lista.
-     * @throws SystemException Caso o objeto ou lista não possa ser convertido em json.
+     * @throws IllegalArgumentException Caso o objeto ou lista não possa ser convertido em json.
      */
-    protected static IJSON recursiveFrom(Object object) throws SystemException {
+    protected static IJSON recursiveFrom(Object object) {
         if ((object == null) || String.class.isInstance(object) || Boolean.class.isInstance(object) || Number.class.isInstance(object) || Character.class.isInstance(object)) {
             return JSONValue.fromObject(object);
         } else if ((Collection.class.isInstance(object)) || (object instanceof Object[]) || (object instanceof byte[]) || (object instanceof int[]) || (object instanceof long[]) || (object instanceof float[]) || (object instanceof double[]) || (object instanceof char[])) {
@@ -55,9 +54,9 @@ public final class JSON {
      * Converter json em JSONObject ou JSONList.
      * @param json JSON que será convertido em objeto ou lista
      * @return Objeto ou lista correspondente ao json.
-     * @throws SystemException Caso o json não possa ser convertido em objeto ou lista.
+     * @throws IllegalArgumentException Caso o json não possa ser convertido em objeto ou lista.
      */
-    public static IJSON toObject(String json) throws SystemException {
+    public static IJSON toObject(String json) {
         if (json != null) {
             json = json.trim();
             if (json.startsWith("{") && json.endsWith("}")) {
@@ -66,7 +65,7 @@ public final class JSON {
                 return JSONList.fromJSON(json);
             }
         }
-        throw new SystemException("invalid.json.format");
+        throw new IllegalArgumentException("invalid.json.format");
     }
 
     /**

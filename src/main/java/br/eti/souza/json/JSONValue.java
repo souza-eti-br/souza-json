@@ -1,7 +1,5 @@
 package br.eti.souza.json;
 
-import br.eti.souza.exception.SystemException;
-
 /**
  * Representa uma lista criada apartir de um json.
  * @author Alan Moraes Souza
@@ -23,11 +21,11 @@ public class JSONValue implements IJSON {
      * Cria JSONValue apartir do json.
      * @param json JSON que será convertido.
      * @return JSONValue correspondente.
-     * @throws SystemException Caso o json não seja válido.
+     * @throws IllegalArgumentException Caso o json não seja válido.
      */
-    protected static JSONValue fromJSON(String json) throws SystemException {
+    protected static JSONValue fromJSON(String json) {
         if (json == null) {
-            throw new SystemException("invalid.json.format");
+            throw new IllegalArgumentException("invalid.json.format");
         } else if ("null".equals(json) || "undefined".equals(json)) {
             return new JSONValue(null);
         } else if ("true".equals(json) || "TRUE".equals(json)) {
@@ -43,7 +41,7 @@ public class JSONValue implements IJSON {
         } else if (json.startsWith("\"") && json.endsWith("\"")) {
             return new JSONValue(json.substring(1, json.length() - 1).replaceAll("\\\\\"", "\""));
         } else {
-            throw new SystemException("invalid.json.format");
+            throw new IllegalArgumentException("invalid.json.format");
         }
     }
 
