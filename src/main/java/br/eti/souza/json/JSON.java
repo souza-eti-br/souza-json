@@ -1,6 +1,7 @@
 package br.eti.souza.json;
 
 import jakarta.json.Json;
+import jakarta.json.JsonValue;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -27,42 +28,48 @@ public final class JSON {
      */
     public static String toJSON(Object object) {
         if (object == null) {
-            return "null";
-        } else if (Character.class.isInstance(object)) {
-            return Json.createValue(Character.class.cast(object).toString()).toString();
-        } else if (String.class.isInstance(object)) {
-            return Json.createValue(String.class.cast(object)).toString();
-        } else if (Boolean.class.isInstance(object)) {
-            return Boolean.class.cast(object).toString();
-        } else if (Byte.class.isInstance(object)) {
-            return Json.createValue(Byte.class.cast(object)).toString();
-        } else if (Integer.class.isInstance(object)) {
-            return Json.createValue(Integer.class.cast(object)).toString();
-        } else if (Long.class.isInstance(object)) {
-            return Json.createValue(Long.class.cast(object)).toString();
-        } else if (Float.class.isInstance(object)) {
-            return Json.createValue(Float.class.cast(object)).toString();
-        } else if (Double.class.isInstance(object)) {
-            return Json.createValue(Double.class.cast(object)).toString();
-        } else if (BigInteger.class.isInstance(object)) {
-            return Json.createValue(BigInteger.class.cast(object)).toString();
-        } else if (BigDecimal.class.isInstance(object)) {
-            return Json.createValue(BigDecimal.class.cast(object)).toString();
-        } else if (object instanceof Map) {
-            var map = Map.class.cast(object);
+            return JsonValue.NULL.toString();
+        } else if (object instanceof Character value) {
+            return Json.createValue(value.toString()).toString();
+        } else if (object instanceof String value) {
+            return Json.createValue(value).toString();
+        } else if (object instanceof Boolean value) {
+            return value.toString();
+        } else if (object instanceof Byte value) {
+            return Json.createValue(value).toString();
+        } else if (object instanceof Integer value) {
+            return Json.createValue(value).toString();
+        } else if (object instanceof Long value) {
+            return Json.createValue(value).toString();
+        } else if (object instanceof Float value) {
+            return Json.createValue(value).toString();
+        } else if (object instanceof Double value) {
+            return Json.createValue(value).toString();
+        } else if (object instanceof BigInteger value) {
+            return Json.createValue(value).toString();
+        } else if (object instanceof BigDecimal value) {
+            return Json.createValue(value).toString();
+        } else if (object instanceof Map map) {
             var mapForJSON = new LinkedHashMap<String, Object>();
             for (var key : map.keySet()) {
                 mapForJSON.put(key.toString(), map.get(key));
             }
             return Json.createObjectBuilder(mapForJSON).build().toString();
-        } else if (object instanceof Collection) {
-            var list = Collection.class.cast(object);
-            var json = Json.createArrayBuilder(list);
-            return json.build().toString();
+        } else if (object instanceof Collection list) {
+            var json = new StringBuilder("[");
+            for (var item : list) {
+                if (json.length() > 1) {
+                    json.append(",");
+                }
+                json.append(" ").append(JSON.toJSON(item));
+            }
+            if (json.length() > 1) {
+                json.append(" ");
+            }
+            return json.append("]").toString();
         } else if (object.getClass().isArray()) {
             var json = new StringBuilder("[");
-            if (object instanceof boolean[]) {
-                var array = (boolean[]) object;
+            if (object instanceof boolean[] array) {
                 for (var item : array) {
                     if (json.length() > 1) {
                         json.append(",");
@@ -73,8 +80,7 @@ public final class JSON {
                     json.append(" ");
                 }
                 return json.append("]").toString();
-            } else if (object instanceof byte[]) {
-                var array = (byte[]) object;
+            } else if (object instanceof byte[] array) {
                 for (var item : array) {
                     if (json.length() > 1) {
                         json.append(",");
@@ -85,8 +91,7 @@ public final class JSON {
                     json.append(" ");
                 }
                 return json.append("]").toString();
-            } else if (object instanceof short[]) {
-                var array = (short[]) object;
+            } else if (object instanceof short[] array) {
                 for (var item : array) {
                     if (json.length() > 1) {
                         json.append(",");
@@ -97,8 +102,7 @@ public final class JSON {
                     json.append(" ");
                 }
                 return json.append("]").toString();
-            } else if (object instanceof char[]) {
-                var array = (char[]) object;
+            } else if (object instanceof char[] array) {
                 for (var item : array) {
                     if (json.length() > 1) {
                         json.append(",");
@@ -109,8 +113,7 @@ public final class JSON {
                     json.append(" ");
                 }
                 return json.append("]").toString();
-            } else if (object instanceof int[]) {
-                var array = (int[]) object;
+            } else if (object instanceof int[] array) {
                 for (var item : array) {
                     if (json.length() > 1) {
                         json.append(",");
@@ -121,8 +124,7 @@ public final class JSON {
                     json.append(" ");
                 }
                 return json.append("]").toString();
-            } else if (object instanceof long[]) {
-                var array = (long[]) object;
+            } else if (object instanceof long[] array) {
                 for (var item : array) {
                     if (json.length() > 1) {
                         json.append(",");
@@ -133,8 +135,7 @@ public final class JSON {
                     json.append(" ");
                 }
                 return json.append("]").toString();
-            } else if (object instanceof float[]) {
-                var array = (float[]) object;
+            } else if (object instanceof float[] array) {
                 for (var item : array) {
                     if (json.length() > 1) {
                         json.append(",");
@@ -145,8 +146,7 @@ public final class JSON {
                     json.append(" ");
                 }
                 return json.append("]").toString();
-            } else if (object instanceof double[]) {
-                var array = (double[]) object;
+            } else if (object instanceof double[] array) {
                 for (var item : array) {
                     if (json.length() > 1) {
                         json.append(",");
@@ -175,7 +175,7 @@ public final class JSON {
             for (var method : object.getClass().getDeclaredMethods()) {
                 if (Modifier.isPublic(method.getModifiers()) && method.getParameterCount() == 0) {
                     var name = method.getName();
-                    if ((name.length() > 3 && name.startsWith("get")) || (name.length() > 2 && name.startsWith("is") && (Boolean.class.isAssignableFrom(method.getReturnType()) || method.getReturnType().getName().equals("boolean")))) {
+                    if (!"getClass".equals(name) && (name.length() > 3 && name.startsWith("get")) || (name.length() > 2 && name.startsWith("is") && (Boolean.class.isAssignableFrom(method.getReturnType()) || method.getReturnType().getName().equals("boolean")))) {
                         if (name.startsWith("get")) {
                             name = name.substring(3, 4).toLowerCase() + name.substring(4);
                         } else {
