@@ -203,7 +203,7 @@ public class JSONTest {
     @Test
     public void arrayObjectToJSON() {
         Assertions.assertEquals("[ { \"i18nMessage\": { \"key\": \"key\", \"args\": [ \"arg01\", \"arg02\" ] } }, { \"text\": \"texto\", \"character\": \"C\", \"flag\": true, \"numberInt\": 2147483647, \"numberLong\": 9223372036854775807, \"numberFloat\": 3.4028235E+38, \"numberDouble\": 1.7976931348623157E+308 } ]", JSON.toJSON(Arrays.asList(new SystemException(new I18nMessage("key", "arg01", "arg02"), new IllegalArgumentException("mensagem")), new ObjectTest()).toArray()));
-    }   
+    }
 }
 
 class ObjectTest {
